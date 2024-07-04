@@ -1,4 +1,4 @@
-import database from "infra/database.js"
+import database from "infra/database.js";
 import orchestrator from "tests/orchestrator.js";
 
 beforeAll(async () => {
@@ -14,4 +14,4 @@ test("GET to /api/v1/status should return 200", async () => {
 
   expect(Array.isArray(responseBody)).toBe(true);
   expect(responseBody.length).toBeGreaterThan(0);
-})
+});
