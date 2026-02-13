@@ -63,8 +63,45 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "O username informado não foi encontrado no sistema.",
-        action: "Verifique se o username foi digitado corretamente",
+        action: "Verifique se o username está digitado corretamente.",
         status_code: 404,
+      });
+    });
+
+    test("With duplicated 'username'", async () => {
+      await orchestrator.createUser({
+        username: "user1",
+      });
+
+      const createdUser2 = await orchestrator.createUser({
+        username: "user2",
+      });
+
+      const activatedUser2 = await orchestrator.activateUser(createdUser2);
+      const sessionObject2 = await orchestrator.createSession(
+        activatedUser2.id,
+      );
+
+      const response = await fetch("http://localhost:3000/api/v1/users/user2", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `session_id=${sessionObject2.token}`,
+        },
+        body: JSON.stringify({
+          username: "user1",
+        }),
+      });
+
+      expect(response.status).toBe(400);
+
+      const responseBody = await response.json();
+
+      expect(responseBody).toEqual({
+        name: "ValidationError",
+        message: "O username informado já está sendo utilizado.",
+        action: "Utilize outro username para realizar esta operação.",
+        status_code: 400,
       });
     });
 
@@ -129,7 +166,7 @@ describe("PATCH /api/v1/users/[username]", () => {
             Cookie: `session_id=${sessionObject2.token}`,
           },
           body: JSON.stringify({
-            email: "email1@email.com",
+            email: "email1@curso.dev",
           }),
         },
       );
@@ -172,8 +209,6 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: "uniqueUser2",
-        email: createdUser.email,
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -193,6 +228,7 @@ describe("PATCH /api/v1/users/[username]", () => {
 
       const response = await fetch(
         `http://localhost:3000/api/v1/users/${createdUser.username}`,
+
         {
           method: "PATCH",
           headers: {
@@ -200,7 +236,7 @@ describe("PATCH /api/v1/users/[username]", () => {
             Cookie: `session_id=${sessionObject.token}`,
           },
           body: JSON.stringify({
-            email: "uniqueEmail2@email.com",
+            email: "uniqueEmail2@curso.dev",
           }),
         },
       );
@@ -212,8 +248,6 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: createdUser.username,
-        email: "uniqueEmail2@email.com",
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -254,8 +288,6 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: responseBody.id,
         username: createdUser.username,
-        email: createdUser.email,
-        password: responseBody.password,
         features: ["create:session", "read:session", "update:user"],
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
@@ -320,9 +352,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         id: defaultUser.id,
         username: "AlteradoPorPrivilegiado",
-        email: defaultUser.email,
         features: defaultUser.features,
-        password: responseBody.password,
         created_at: responseBody.created_at,
         updated_at: responseBody.updated_at,
       });
