@@ -29,7 +29,7 @@ describe("DELETE /api/v1/sessions", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
     });
@@ -59,7 +59,7 @@ describe("DELETE /api/v1/sessions", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
     });
@@ -96,10 +96,10 @@ describe("DELETE /api/v1/sessions", () => {
 
       expect(
         responseBody.expires_at < sessionObject.expires_at.toISOString(),
-      ).toEqual(true);
+      ).toBe(true);
       expect(
         responseBody.updated_at > sessionObject.updated_at.toISOString(),
-      ).toEqual(true);
+      ).toBe(true);
 
       // Set-Cookie assertions
       const parsedSetCookie = setCookieParser(response, {
@@ -131,7 +131,7 @@ describe("DELETE /api/v1/sessions", () => {
       expect(doubleCheckResponseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
     });

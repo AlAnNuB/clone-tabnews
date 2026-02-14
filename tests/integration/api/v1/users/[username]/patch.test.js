@@ -63,7 +63,7 @@ describe("PATCH /api/v1/users/[username]", () => {
       expect(responseBody).toEqual({
         name: "NotFoundError",
         message: "O username informado não foi encontrado no sistema.",
-        action: "Verifique se o username está digitado corretamente.",
+        action: "Verifique se o username foi digitado corretamente.",
         status_code: 404,
       });
     });
@@ -166,7 +166,7 @@ describe("PATCH /api/v1/users/[username]", () => {
             Cookie: `session_id=${sessionObject2.token}`,
           },
           body: JSON.stringify({
-            email: "email1@curso.dev",
+            email: "email1@email.com",
           }),
         },
       );

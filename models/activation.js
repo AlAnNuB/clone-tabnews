@@ -1,7 +1,7 @@
-import email from "infra/email.js"
+import email from "infra/email.js";
 import database from "infra/database.js";
 import webserver from "infra/webserver.js";
-import user from "models/user.js"
+import user from "models/user.js";
 import { ForbiddenError, NotFoundError } from "infra/errors.js";
 import authorization from "models/authorization.js";
 
@@ -26,14 +26,15 @@ async function findOneValidById(tokenId) {
         LIMIT
           1
       ;`,
-      values: [tokenId]
+      values: [tokenId],
     });
 
     if (results.rowCount === 0) {
       throw new NotFoundError({
-        message: "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
-        action: "Faça um novo cadastro."
-      })
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        action: "Faça um novo cadastro.",
+      });
     }
 
     return results.rows[0];
@@ -56,7 +57,7 @@ async function create(userId) {
         RETURNING
           *
       ;`,
-      values: [userId, expiresAt]
+      values: [userId, expiresAt],
     });
 
     return results.rows[0];
@@ -66,7 +67,7 @@ async function create(userId) {
 async function markTokenAsUsed(activationTokenId) {
   const usedActivationToken = await runUpdateQuery(activationTokenId);
   return usedActivationToken;
-  
+
   async function runUpdateQuery(activationTokenId) {
     const results = await database.query({
       text: `
@@ -84,8 +85,8 @@ async function markTokenAsUsed(activationTokenId) {
     });
 
     return results.rows[0];
-  };
-};
+  }
+}
 
 async function activateUserByUserId(userId) {
   const userToActivate = await user.findOneById(userId);
@@ -117,7 +118,7 @@ ${webserver.origin}/cadastro/ativar/${activationToken.id}
 Atenciosamente,
 Equipe FinTab`,
   });
-};
+}
 
 const activation = {
   findOneValidById,

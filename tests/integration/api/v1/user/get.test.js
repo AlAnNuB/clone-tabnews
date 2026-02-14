@@ -26,7 +26,7 @@ describe("GET /api/v1/user", () => {
       });
     });
   });
-  
+
   describe("Default user", () => {
     test("With valid session", async () => {
       const createdUser = await orchestrator.createUser({
@@ -55,6 +55,7 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         id: createdUser.id,
         username: "UserWithValidSession",
+        email: createdUser.email,
         features: ["create:session", "read:session", "update:user"],
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
@@ -118,6 +119,7 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         id: createdUser.id,
         username: "UserWithHalfwayExpiredSession",
+        email: createdUser.email,
         features: ["create:session", "read:session", "update:user"],
         created_at: createdUser.created_at.toISOString(),
         updated_at: activatedUser.updated_at.toISOString(),
@@ -153,7 +155,6 @@ describe("GET /api/v1/user", () => {
       });
     });
 
-
     test("With nonexistent session", async () => {
       const nonexistentToken =
         "5a22deb74407dcbb628d7ac12f294c2b8d223c56f384118df9e3b585631c3a4989a6cd511b8581a408f7633cace2c651";
@@ -171,7 +172,7 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
 
@@ -215,7 +216,7 @@ describe("GET /api/v1/user", () => {
       expect(responseBody).toEqual({
         name: "UnauthorizedError",
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
         status_code: 401,
       });
 

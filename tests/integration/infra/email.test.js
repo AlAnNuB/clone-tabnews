@@ -12,7 +12,7 @@ describe("infra/email.js", () => {
     await email.send({
       from: "AlanNub <alan@alannub.com.br>",
       to: "contato@alannub.com.br",
-      subject: "Teste de assunto",
+      subject: "Teste de assunto.",
       text: "Teste de corpo",
       // html: ...
     });

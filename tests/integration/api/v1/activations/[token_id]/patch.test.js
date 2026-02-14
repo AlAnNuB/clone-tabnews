@@ -25,7 +25,8 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
 
       expect(responseBody).toEqual({
         name: "NotFoundError",
-        message: "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
         action: "Faça um novo cadastro.",
         status_code: 404,
       });
@@ -33,7 +34,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
 
     test("With expired token", async () => {
       jest.useFakeTimers({
-        now: new Date(Date.now() - activation.EXPIRATION_IN_MILLISECONDS)
+        now: new Date(Date.now() - activation.EXPIRATION_IN_MILLISECONDS),
       });
 
       const createdUser = await orchestrator.createUser();
@@ -51,14 +52,14 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       expect(response.status).toBe(404);
 
       const responseBody = await response.json();
-      
+
       expect(responseBody).toEqual({
         name: "NotFoundError",
-        message: "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
         action: "Faça um novo cadastro.",
         status_code: 404,
       });
-
     });
 
     test("With already used token", async () => {
@@ -84,10 +85,11 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       expect(response2.status).toBe(404);
 
       const response2Body = await response2.json();
-      
+
       expect(response2Body).toEqual({
         name: "NotFoundError",
-        message: "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
+        message:
+          "O token de ativação utilizado não foi encontrado no sistema ou expirou.",
         action: "Faça um novo cadastro.",
         status_code: 404,
       });
@@ -110,7 +112,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
 
       expect(responseBody).toEqual({
         id: activationToken.id,
-        used_at: activationToken.used_at,
+        used_at: responseBody.used_at,
         user_id: activationToken.user_id,
         expires_at: activationToken.expires_at.toISOString(),
         created_at: activationToken.created_at.toISOString(),
@@ -134,7 +136,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       expect(expiresAt - createdAt).toBe(activation.EXPIRATION_IN_MILLISECONDS);
 
       const activatedUser = await user.findOneById(responseBody.user_id);
-      expect(activatedUser).toEqual([
+      expect(activatedUser.features).toEqual([
         "create:session",
         "read:session",
         "update:user",
@@ -142,9 +144,9 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
     });
 
     test("With valid token but already activated user", async () => {
-      const createUser = await orchestrator.createUser();
-      await orchestrator.activateUser(createUser);
-      const activationToken = await activation.create(createUser.id);
+      const createdUser = await orchestrator.createUser();
+      await orchestrator.activateUser(createdUser);
+      const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(
         `http://localhost:3000/api/v1/activations/${activationToken.id}`,
@@ -170,7 +172,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
     test("With valid token, but already logged in user", async () => {
       const user1 = await orchestrator.createUser();
       await orchestrator.activateUser(user1);
-      const user1SessionObject = await orchestrator.createSession(user1.id)
+      const user1SessionObject = await orchestrator.createSession(user1.id);
 
       const user2 = await orchestrator.createUser();
       const user2ActivationToken = await activation.create(user2.id);
@@ -180,7 +182,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
         {
           method: "PATCH",
           headers: {
-            Cookie: `session_id=${user1SessionObject.token}`
+            Cookie: `session_id=${user1SessionObject.token}`,
           },
         },
       );
@@ -192,7 +194,8 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       expect(responseBody).toEqual({
         name: "ForbiddenError",
         message: "Você não possui permissão para executar esta ação.",
-        action: 'Verifique se o usuário possui a feature "read:activation_token".',
+        action:
+          'Verifique se o seu usuário possui a feature "read:activation_token"',
         status_code: 403,
       });
     });

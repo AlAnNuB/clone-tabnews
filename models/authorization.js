@@ -156,6 +156,6 @@ function validateResource(resource) {
 const authorization = {
   can,
   filterOutput,
-}
+};
 
 export default authorization;

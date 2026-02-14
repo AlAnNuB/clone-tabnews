@@ -1,7 +1,7 @@
 import webserver from "infra/webserver.js";
 import activation from "models/activation.js";
 import orchestrator from "tests/orchestrator.js";
-import user from "models/user.js"
+import user from "models/user.js";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
@@ -10,13 +10,15 @@ beforeAll(async () => {
   await orchestrator.deleteAllEmails();
 });
 
-describe("Use case: Registration Flow (all successfull)", () => {
+describe("Use case: Registration Flow (all successful)", () => {
   let createUserResponseBody;
   let activationTokenId;
   let createSessionsResponseBody;
 
   test("Create user account", async () => {
-    const createUserResponse = await fetch("http://localhost:3000/api/v1/users", {
+    const createUserResponse = await fetch(
+      "http://localhost:3000/api/v1/users",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,9 +26,10 @@ describe("Use case: Registration Flow (all successfull)", () => {
         body: JSON.stringify({
           username: "RegistrationFlow",
           email: "registration.flow@email.com.br",
-          password: "RegistrationFlowPassword"
+          password: "RegistrationFlowPassword",
         }),
-      });
+      },
+    );
 
     expect(createUserResponse.status).toBe(201);
 
@@ -55,7 +58,8 @@ describe("Use case: Registration Flow (all successfull)", () => {
       `${webserver.origin}/cadastro/ativar/${activationTokenId}`,
     );
 
-    const activationTokenObject = await activation.findOneValidById(activationTokenId);
+    const activationTokenObject =
+      await activation.findOneValidById(activationTokenId);
 
     expect(activationTokenObject.user_id).toBe(createUserResponseBody.id);
     expect(activationTokenObject.used_at).toBe(null);
@@ -102,7 +106,7 @@ describe("Use case: Registration Flow (all successfull)", () => {
 
     createSessionsResponseBody = await createSessionResponse.json();
 
-    expect(createSessionsResponseBody.user_id).toBe(createUserResponseBody.id)
+    expect(createSessionsResponseBody.user_id).toBe(createUserResponseBody.id);
   });
 
   test("Get user information", async () => {
@@ -118,4 +122,4 @@ describe("Use case: Registration Flow (all successfull)", () => {
 
     expect(userResponseBody.id).toBe(createUserResponseBody.id);
   });
-})
+});

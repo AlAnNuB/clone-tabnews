@@ -42,7 +42,7 @@ async function patchHandler(request, response) {
   }
 
   const updatedUser = await user.update(username, userInputValues);
-  
+
   const secureOutputValues = authorization.filterOutput(
     userTryingToPatch,
     "read:user",

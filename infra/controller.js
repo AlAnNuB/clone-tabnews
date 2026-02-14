@@ -19,7 +19,11 @@ function onNoMatchHandler(request, response) {
 }
 
 function onErrorHandler(error, request, response) {
-  if (error instanceof ValidationError || error instanceof NotFoundError || error instanceof ForbiddenError) {
+  if (
+    error instanceof ValidationError ||
+    error instanceof NotFoundError ||
+    error instanceof ForbiddenError
+  ) {
     return response.status(error.statusCode).json(error);
   }
 
@@ -71,7 +75,7 @@ async function injectAnonymousOrUser(request, response, next) {
 
 async function injectAuthenticatedUser(request) {
   const sessionToken = request.cookies.session_id;
-  const sessionObject = session.findOneValidByToken(sessionToken);
+  const sessionObject = await session.findOneValidByToken(sessionToken);
   const userObject = await user.findOneById(sessionObject.user_id);
 
   request.context = {
@@ -92,19 +96,18 @@ function injectAnonymousUser(request) {
 }
 
 function canRequest(feature) {
-
   return (request, response, next) => {
-    const useTryingToRequest = request.context.user;
+    const userTryingToRequest = request.context.user;
 
-    if (authorization.can(useTryingToRequest, feature)) {
+    if (authorization.can(userTryingToRequest, feature)) {
       return next();
     }
 
     throw new ForbiddenError({
-      message: "Você não possui permissão para executar essa ação.",
+      message: "Você não possui permissão para executar esta ação.",
       action: `Verifique se o seu usuário possui a feature "${feature}"`,
     });
-  }
+  };
 }
 
 const controller = {

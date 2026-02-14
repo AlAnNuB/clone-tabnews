@@ -16,7 +16,7 @@ exports.up = (pgm) => {
       notNull: true,
     },
 
-     expires_at: {
+    expires_at: {
       type: "timestamptz",
       notNull: true,
     },
@@ -32,8 +32,7 @@ exports.up = (pgm) => {
       notNull: true,
       default: pgm.func("timezone('utc', now())"),
     },
-  })
+  });
 };
 
 exports.down = false;
-
