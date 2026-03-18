@@ -7,7 +7,7 @@ function getOrigin() {
     return `https://${process.env.VERCEL_URL}`;
   }
 
-  return "https://alannub.com.br";
+  return "https://clone-tabnews.alannub.site";
 }
 
 const webserver = {
