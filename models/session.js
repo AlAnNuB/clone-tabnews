@@ -21,14 +21,14 @@ async function findOneValidByToken(sessionToken) {
           AND expires_at > NOW()          
         LIMIT
           1
-      `,
+      ;`,
       values: [sessionToken],
     });
 
     if (results.rowCount === 0) {
       throw new UnauthorizedError({
         message: "Usuário não possui sessão ativa.",
-        action: "Verifique se esse usuário está logado e tente novamente.",
+        action: "Verifique se este usuário está logado e tente novamente.",
       });
     }
 
